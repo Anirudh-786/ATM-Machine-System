@@ -18,9 +18,16 @@
     border: 5px solid #0f0;
     border-radius: 15px;
     padding: 20px;
-    width: 400px;
+    width: 420px;
     text-align: center;
     box-shadow: 0px 0px 20px #0f0;
+  }
+  .bank-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0f0;
+    margin-bottom: 10px;
+    text-transform: uppercase;
   }
   .screen {
     background: #111;
@@ -51,6 +58,7 @@
 </head>
 <body>
 <div class="atm">
+  <div class="bank-name">🏦 Bank of America ATM</div>
   <div class="screen" id="screen">💳 Welcome! Please Insert Your Card.</div>
   <div class="keypad" id="keypad"></div>
 </div>
@@ -61,11 +69,9 @@ let pin = 5678;
 let stage = "insertCard";
 let inputBuffer = "";
 
-// reference
 const screen = document.getElementById("screen");
 const keypad = document.getElementById("keypad");
 
-// create keypad (0–9 + enter + clear)
 function renderKeypad(show=true) {
   keypad.innerHTML = "";
   if (!show) return;
@@ -184,7 +190,6 @@ function exitATM() {
   }, 3000);
 }
 
-// init
 renderKeypad(true);
 </script>
 </body>
