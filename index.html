@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ATM Simulator</title>
+<style>
+  body {
+    background-color: #222;
+    font-family: monospace;
+    color: #0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .atm {
+    background: #000;
+    border: 5px solid #0f0;
+    border-radius: 15px;
+    padding: 20px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0px 0px 20px #0f0;
+  }
+  .screen {
+    background: #111;
+    padding: 15px;
+    border: 2px solid #0f0;
+    margin-bottom: 15px;
+    min-height: 100px;
+  }
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .btn {
+    padding: 15px;
+    background: #0f0;
+    color: #000;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .btn:hover {
+    background: #9f9;
+  }
+</style>
+</head>
+<body>
+<div class="atm">
+  <div class="screen" id="screen">💳 Welcome! Please Insert Your Card.</div>
+  <div class="keypad" id="keypad"></div>
+</div>
+
+<script>
+let balance = 10000;
+let pin = 5678;
+let stage = "insertCard";
+let inputBuffer = "";
+
+// reference
+const screen = document.getElementById("screen");
+const keypad = document.getElementById("keypad");
+
+// create keypad (0–9 + enter + clear)
+function renderKeypad(show=true) {
+  keypad.innerHTML = "";
+  if (!show) return;
+  for (let i = 1; i <= 9; i++) {
+    keypad.innerHTML += `<button class='btn' onclick='press(${i})'>${i}</button>`;
+  }
+  keypad.innerHTML += `<button class='btn' onclick='clearInput()'>Clear</button>`;
+  keypad.innerHTML += `<button class='btn' onclick='press(0)'>0</button>`;
+  keypad.innerHTML += `<button class='btn' onclick='enterInput()'>Enter</button>`;
+}
+
+function press(num) {
+  inputBuffer += num;
+  screen.innerText = "*".repeat(inputBuffer.length);
+}
+
+function clearInput() {
+  inputBuffer = "";
+  screen.innerText = "Enter PIN:";
+}
+
+function enterInput() {
+  if (stage === "insertCard") {
+    stage = "enterPin";
+    screen.innerText = "Please Enter PIN:";
+    renderKeypad(true);
+  }
+  else if (stage === "enterPin") {
+    if (parseInt(inputBuffer) === pin) {
+      stage = "menu";
+      showMenu();
+    } else {
+      screen.innerText = "❌ Incorrect PIN. Try Again.";
+    }
+    inputBuffer = "";
+  }
+  else if (stage === "withdraw") {
+    let amt = parseFloat(inputBuffer);
+    if (amt <= balance) {
+      balance -= amt;
+      screen.innerText = `✅ ${amt} withdrawn.\n💵 Collect Your Cash.\nNew Balance: ${balance}`;
+      stage = "end";
+      setTimeout(exitATM, 3000);
+    } else {
+      screen.innerText = "❌ Insufficient Balance.";
+    }
+    inputBuffer = "";
+  }
+  else if (stage === "deposit") {
+    let amt = parseFloat(inputBuffer);
+    balance += amt;
+    screen.innerText = `✅ ${amt} deposited.\nNew Balance: ${balance}`;
+    stage = "end";
+    setTimeout(exitATM, 3000);
+    inputBuffer = "";
+  }
+  else if (stage === "changePin") {
+    pin = parseInt(inputBuffer);
+    screen.innerText = `✅ PIN Changed Successfully.\nYour new PIN is set.`;
+    stage = "end";
+    setTimeout(exitATM, 3000);
+    inputBuffer = "";
+  }
+}
+
+function showMenu() {
+  renderKeypad(false);
+  screen.innerHTML = `
+    🔹 Select Option:<br><br>
+    1. Check Balance<br>
+    2. Withdraw<br>
+    3. Deposit<br>
+    4. Change PIN<br>
+    5. Exit<br>
+  `;
+  keypad.innerHTML = `
+    <button class='btn' onclick='checkBal()'>1</button>
+    <button class='btn' onclick='withdraw()'>2</button>
+    <button class='btn' onclick='deposit()'>3</button>
+    <button class='btn' onclick='changePin()'>4</button>
+    <button class='btn' onclick='exitATM()'>5</button>
+  `;
+}
+
+function checkBal() {
+  screen.innerText = `💰 Your Balance: ${balance}`;
+  stage = "end";
+  setTimeout(exitATM, 3000);
+}
+
+function withdraw() {
+  stage = "withdraw";
+  screen.innerText = "Enter Amount to Withdraw:";
+  renderKeypad(true);
+}
+
+function deposit() {
+  stage = "deposit";
+  screen.innerText = "Enter Amount to Deposit:";
+  renderKeypad(true);
+}
+
+function changePin() {
+  stage = "changePin";
+  screen.innerText = "Enter New PIN:";
+  renderKeypad(true);
+}
+
+function exitATM() {
+  stage = "insertCard";
+  screen.innerText = "💳 Please Take Your Card.\n🙏 Thank You! Visit Again.";
+  keypad.innerHTML = "";
+  setTimeout(() => {
+    screen.innerText = "💳 Welcome! Please Insert Your Card.";
+    renderKeypad(true);
+  }, 3000);
+}
+
+// init
+renderKeypad(true);
+</script>
+</body>
+</html>
