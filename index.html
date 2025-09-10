@@ -114,7 +114,7 @@ function enterInput() {
       balance -= amt;
       screen.innerText = `✅ ${amt} withdrawn.\n💵 Collect Your Cash.\nNew Balance: ${balance}`;
       stage = "end";
-      setTimeout(exitATM, 3000);
+      setTimeout(exitATM, 6000);
     } else {
       screen.innerText = "❌ Insufficient Balance.";
     }
@@ -125,14 +125,14 @@ function enterInput() {
     balance += amt;
     screen.innerText = `✅ ${amt} deposited.\nNew Balance: ${balance}`;
     stage = "end";
-    setTimeout(exitATM, 3000);
+    setTimeout(exitATM, 6000);
     inputBuffer = "";
   }
   else if (stage === "changePin") {
     pin = parseInt(inputBuffer);
     screen.innerText = `✅ PIN Changed Successfully.\nYour new PIN is set.`;
     stage = "end";
-    setTimeout(exitATM, 3000);
+    setTimeout(exitATM, 6000);
     inputBuffer = "";
   }
 }
@@ -159,7 +159,7 @@ function showMenu() {
 function checkBal() {
   screen.innerText = `💰 Your Balance: ${balance}`;
   stage = "end";
-  setTimeout(exitATM, 3000);
+  setTimeout(exitATM, 6000);
 }
 
 function withdraw() {
@@ -187,7 +187,7 @@ function exitATM() {
   setTimeout(() => {
     screen.innerText = "💳 Welcome! Please Insert Your Card.";
     renderKeypad(true);
-  }, 3000);
+  }, 6000);
 }
 
 renderKeypad(true);
